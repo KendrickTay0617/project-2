@@ -1,141 +1,145 @@
-const handleDomo = (e) => {
+const handleWatch = (e) => {
     e.preventDefault();
     
     $("#domoMessage").animate({width:'hide'},350);
     
-    if($("#domoName").val() == '' || $("#domoAge").val() == '') {
-        handleError("RAWR! All fields are required");
+    if($("#watchTitle").val() == '') {
+        handleError("Tite is required");
         return false;
     }
     
-    sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function() {
-        loadDomosFromServer();
+    sendAjax('POST', $("#makerForm").attr("action"), $("#makerForm").serialize(), function() {
+        loadWatchlistFromServer();
     });
     
     return false;
 };
 
-const DomoForm = (props) => {
+//const MakerForm = (props) => {
+//    return (
+//        <form id="makerForm"
+//                onSubmit={handleDomo}
+//                name="makerForm"
+//                action="/maker"
+//                method="POST"
+//                className="makerForm"
+//        >
+//            <label htmlFor="type">Type: </label>
+//            <select name="type" id="type">
+//                <option value="movie">Movie</option>
+//                <option value="show">Show</option>
+//                <option value="other">(other)</option>
+//            </select>
+//                
+//            <label htmlFor="name">Name: </label>
+//            <input id="domoName" type="text" name="name" placeholder="Domo Name"/>
+//
+//            <label htmlFor="age">Age: </label>
+//            <input id="domoAge" type="text" name="age" placeholder="Domo Age"/>
+//
+//            <label htmlFor="level">Level: </label>
+//            <input id="domoLevel" type="text" name="level" placeholder="Domo Level"/>
+//
+//            <input type="hidden" name="_csrf" value={props.csrf} />
+//            <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+//        </form>
+//    );
+//};
+
+const MakerForm = (props) => {
     return (
-        <form id="domoForm"
-                onSubmit={handleDomo}
-                name="domoForm"
+        <form id="makerForm"
+                onSubmit={handleWatch}
+                name="makerForm"
                 action="/maker"
                 method="POST"
-                className="domoForm"
+                className="makerForm"
         >
-            <label htmlFor="name">Name: </label>
-            <input id="domoName" type="text" name="name" placeholder="Domo Name"/>
-            <label htmlFor="age">Age: </label>
-            <input id="domoAge" type="text" name="age" placeholder="Domo Age"/>
-            <label htmlFor="level">Level: </label>
-            <input id="domoLevel" type="text" name="level" placeholder="Domo Level"/>
+            <label htmlFor="watchType">Type: </label>
+            <select name="watchType" id="watchType">
+                <option value="movie">Movie</option>
+                <option value="show">Show</option>
+                <option value="other">(other)</option>
+            </select>
+                
+            <label htmlFor="title">Title: </label>
+            <input id="watchTitle" type="text" name="title" placeholder="Title"/>
+            
+            <label htmlFor="link">URL (Optional): </label>
+            <input id="watchLink" type="text" name="link" placeholder="URL"/>
+            
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+            <input className="makeWatchSubmit" type="submit" value="Create" />
         </form>
     );
 };
 
-const DomoList = function(props) {
-    if (props.domos.length === 0) {
+const WatchList = function(props) {
+    if (props.watchlist.length === 0) {
         return (
-            <div className="domoList">
-                <h3 className="emptyDomo">No Domos yet</h3>
+            <div className="watchList">
+                <h3 className="emptyWatch">There is nothing here...</h3>
             </div>
         );
     }
     
-    const domoNodes = props.domos.map(function(domo) {
-        let divStyle1 = {
-            backgroundColor: 'springgreen',
-        };
+    const watchNodes = props.watchlist.map(function(watch) {
+        let movieIcon = "/assets/img/movie.png";
+        let showIcon = "/assets/img/show.png";
+        let videoIcon = "/assets/img/video.png";
         
-        let divStyle2 = {
-            backgroundColor: 'gold',
-        };
-        
-        let divStyle3 = {
-            backgroundColor: 'red',
-        };
-        
-//        let divStyle4 = {
-//            backgroundColor: '#55acee',
-//        }
-        
-        if (domo.level <= 25) {
+        if (watch.watchType === "movie") {
             return (
-                <div key={domo._id} className="domo">
-                    <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-                    <h3 className="domoName"> Name: {domo.name} </h3>
-                    <h3 className="domoAge"> Age: {domo.age} </h3>
-                    <h3 className="domoLevel"> Level: {domo.level} </h3>
+                <div key={watch._id} className="watch">
+                    <img src={movieIcon} alt="movie icon" className="icon" />
+                    <h3 className="watchTitle"> Title: {watch.title} </h3>
+                    <h3 className="watchLink"> Link: {watch.link} </h3>
                 </div>
             );
-        } else if (domo.level <= 50) {
+        } else if (watch.watchType === "show") {
             return (
-                <div key={domo._id} className="domo" style={divStyle1}>
-                    <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-                    <h3 className="domoName"> Name: {domo.name} </h3>
-                    <h3 className="domoAge"> Age: {domo.age} </h3>
-                    <h3 className="domoLevel"> Level: {domo.level} </h3>
-                </div>
-            );
-        } else if (domo.level <= 75) {
-            return (
-                <div key={domo._id} className="domo" style={divStyle2}>
-                    <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-                    <h3 className="domoName"> Name: {domo.name} </h3>
-                    <h3 className="domoAge"> Age: {domo.age} </h3>
-                    <h3 className="domoLevel"> Level: {domo.level} </h3>
+                <div key={watch._id} className="watch">
+                    <img src={showIcon} alt="show icon" className="icon" />
+                    <h3 className="watchTitle"> Title: {watch.title} </h3>
+                    <h3 className="watchLink"> Link: {watch.link} </h3>
                 </div>
             );
         } else {
             return (
-                <div key={domo._id} className="domo" style={divStyle3}>
-                    <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-                    <h3 className="domoName"> Name: {domo.name} </h3>
-                    <h3 className="domoAge"> Age: {domo.age} </h3>
-                    <h3 className="domoLevel"> Level: {domo.level} </h3>
+                <div key={watch._id} className="watch">
+                    <img src={videoIcon} alt="video icon" className="icon" />
+                    <h3 className="watchTitle"> Title: {watch.title} </h3>
+                    <h3 className="watchLink"> Link: {watch.link} </h3>
                 </div>
             );
         }
     });
     
     return (
-        <div className="domoList">
-            {domoNodes}
+        <div className="watchList">
+            {watchNodes}
         </div>
     );
 };
 
-const loadDomosFromServer = () => {
-//    const deleteButton = document.querySelector("#deleteButton");
-//    
-//    deleteButton.addEventListener("click", (e) => {
-//        sendAjax('DELETE', '/deleteDomos', null, (data) => {
-//            ReactDOM.render(
-//                <DomoList domos={data.domos} />, document.querySelector("#domos")
-//            );
-//        });
-//    });
-    
-    sendAjax('GET', '/getDomos', null, (data) => {
+const loadWatchlistFromServer = () => {
+    sendAjax('GET', '/getWatchlist', null, (data) => {
         ReactDOM.render(
-            <DomoList domos={data.domos} />, document.querySelector("#domos")
+            <WatchList watchlist={data.watchlist} />, document.querySelector("#watchlist")
         );
     });
 };
 
 const setup = function(csrf) {
     ReactDOM.render(
-        <DomoForm csrf={csrf} />, document.querySelector("#makeDomo")
+        <MakerForm csrf={csrf} />, document.querySelector("#makeWatch")
     );
     
     ReactDOM.render(
-        <DomoList domos={[]} />, document.querySelector("#domos")
+        <WatchList watchlist={[]} />, document.querySelector("#watchlist")
     );
     
-    loadDomosFromServer();
+    loadWatchlistFromServer();
 };
 
 const getToken = () => {

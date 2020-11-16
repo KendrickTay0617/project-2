@@ -1,179 +1,172 @@
 "use strict";
 
-var handleDomo = function handleDomo(e) {
+var handleWatch = function handleWatch(e) {
   e.preventDefault();
   $("#domoMessage").animate({
     width: 'hide'
   }, 350);
 
-  if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
-    handleError("RAWR! All fields are required");
+  if ($("#watchTitle").val() == '') {
+    handleError("Tite is required");
     return false;
   }
 
-  sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
+  sendAjax('POST', $("#makerForm").attr("action"), $("#makerForm").serialize(), function () {
+    loadWatchlistFromServer();
   });
   return false;
-};
+}; //const MakerForm = (props) => {
+//    return (
+//        <form id="makerForm"
+//                onSubmit={handleDomo}
+//                name="makerForm"
+//                action="/maker"
+//                method="POST"
+//                className="makerForm"
+//        >
+//            <label htmlFor="type">Type: </label>
+//            <select name="type" id="type">
+//                <option value="movie">Movie</option>
+//                <option value="show">Show</option>
+//                <option value="other">(other)</option>
+//            </select>
+//                
+//            <label htmlFor="name">Name: </label>
+//            <input id="domoName" type="text" name="name" placeholder="Domo Name"/>
+//
+//            <label htmlFor="age">Age: </label>
+//            <input id="domoAge" type="text" name="age" placeholder="Domo Age"/>
+//
+//            <label htmlFor="level">Level: </label>
+//            <input id="domoLevel" type="text" name="level" placeholder="Domo Level"/>
+//
+//            <input type="hidden" name="_csrf" value={props.csrf} />
+//            <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+//        </form>
+//    );
+//};
 
-var DomoForm = function DomoForm(props) {
+
+var MakerForm = function MakerForm(props) {
   return /*#__PURE__*/React.createElement("form", {
-    id: "domoForm",
-    onSubmit: handleDomo,
-    name: "domoForm",
+    id: "makerForm",
+    onSubmit: handleWatch,
+    name: "makerForm",
     action: "/maker",
     method: "POST",
-    className: "domoForm"
+    className: "makerForm"
   }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "name"
-  }, "Name: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoName",
+    htmlFor: "watchType"
+  }, "Type: "), /*#__PURE__*/React.createElement("select", {
+    name: "watchType",
+    id: "watchType"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "movie"
+  }, "Movie"), /*#__PURE__*/React.createElement("option", {
+    value: "show"
+  }, "Show"), /*#__PURE__*/React.createElement("option", {
+    value: "other"
+  }, "(other)")), /*#__PURE__*/React.createElement("label", {
+    htmlFor: "title"
+  }, "Title: "), /*#__PURE__*/React.createElement("input", {
+    id: "watchTitle",
     type: "text",
-    name: "name",
-    placeholder: "Domo Name"
+    name: "title",
+    placeholder: "Title"
   }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "age"
-  }, "Age: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoAge",
+    htmlFor: "link"
+  }, "URL (Optional): "), /*#__PURE__*/React.createElement("input", {
+    id: "watchLink",
     type: "text",
-    name: "age",
-    placeholder: "Domo Age"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "level"
-  }, "Level: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoLevel",
-    type: "text",
-    name: "level",
-    placeholder: "Domo Level"
+    name: "link",
+    placeholder: "URL"
   }), /*#__PURE__*/React.createElement("input", {
     type: "hidden",
     name: "_csrf",
     value: props.csrf
   }), /*#__PURE__*/React.createElement("input", {
-    className: "makeDomoSubmit",
+    className: "makeWatchSubmit",
     type: "submit",
-    value: "Make Domo"
+    value: "Create"
   }));
 };
 
-var DomoList = function DomoList(props) {
-  if (props.domos.length === 0) {
+var WatchList = function WatchList(props) {
+  if (props.watchlist.length === 0) {
     return /*#__PURE__*/React.createElement("div", {
-      className: "domoList"
+      className: "watchList"
     }, /*#__PURE__*/React.createElement("h3", {
-      className: "emptyDomo"
-    }, "No Domos yet"));
+      className: "emptyWatch"
+    }, "There is nothing here..."));
   }
 
-  var domoNodes = props.domos.map(function (domo) {
-    var divStyle1 = {
-      backgroundColor: 'springgreen'
-    };
-    var divStyle2 = {
-      backgroundColor: 'gold'
-    };
-    var divStyle3 = {
-      backgroundColor: 'red'
-    }; //        let divStyle4 = {
-    //            backgroundColor: '#55acee',
-    //        }
+  var watchNodes = props.watchlist.map(function (watch) {
+    var movieIcon = "/assets/img/movie.png";
+    var showIcon = "/assets/img/show.png";
+    var videoIcon = "/assets/img/video.png";
 
-    if (domo.level <= 25) {
+    if (watch.watchType === "movie") {
       return /*#__PURE__*/React.createElement("div", {
-        key: domo._id,
-        className: "domo"
+        key: watch._id,
+        className: "watch"
       }, /*#__PURE__*/React.createElement("img", {
-        src: "/assets/img/domoface.jpeg",
-        alt: "domo face",
-        className: "domoFace"
+        src: movieIcon,
+        alt: "movie icon",
+        className: "icon"
       }), /*#__PURE__*/React.createElement("h3", {
-        className: "domoName"
-      }, " Name: ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoAge"
-      }, " Age: ", domo.age, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoLevel"
-      }, " Level: ", domo.level, " "));
-    } else if (domo.level <= 50) {
+        className: "watchTitle"
+      }, " Title: ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "watchLink"
+      }, " Link: ", watch.link, " "));
+    } else if (watch.watchType === "show") {
       return /*#__PURE__*/React.createElement("div", {
-        key: domo._id,
-        className: "domo",
-        style: divStyle1
+        key: watch._id,
+        className: "watch"
       }, /*#__PURE__*/React.createElement("img", {
-        src: "/assets/img/domoface.jpeg",
-        alt: "domo face",
-        className: "domoFace"
+        src: showIcon,
+        alt: "show icon",
+        className: "icon"
       }), /*#__PURE__*/React.createElement("h3", {
-        className: "domoName"
-      }, " Name: ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoAge"
-      }, " Age: ", domo.age, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoLevel"
-      }, " Level: ", domo.level, " "));
-    } else if (domo.level <= 75) {
-      return /*#__PURE__*/React.createElement("div", {
-        key: domo._id,
-        className: "domo",
-        style: divStyle2
-      }, /*#__PURE__*/React.createElement("img", {
-        src: "/assets/img/domoface.jpeg",
-        alt: "domo face",
-        className: "domoFace"
-      }), /*#__PURE__*/React.createElement("h3", {
-        className: "domoName"
-      }, " Name: ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoAge"
-      }, " Age: ", domo.age, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoLevel"
-      }, " Level: ", domo.level, " "));
+        className: "watchTitle"
+      }, " Title: ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "watchLink"
+      }, " Link: ", watch.link, " "));
     } else {
       return /*#__PURE__*/React.createElement("div", {
-        key: domo._id,
-        className: "domo",
-        style: divStyle3
+        key: watch._id,
+        className: "watch"
       }, /*#__PURE__*/React.createElement("img", {
-        src: "/assets/img/domoface.jpeg",
-        alt: "domo face",
-        className: "domoFace"
+        src: videoIcon,
+        alt: "video icon",
+        className: "icon"
       }), /*#__PURE__*/React.createElement("h3", {
-        className: "domoName"
-      }, " Name: ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoAge"
-      }, " Age: ", domo.age, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoLevel"
-      }, " Level: ", domo.level, " "));
+        className: "watchTitle"
+      }, " Title: ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "watchLink"
+      }, " Link: ", watch.link, " "));
     }
   });
   return /*#__PURE__*/React.createElement("div", {
-    className: "domoList"
-  }, domoNodes);
+    className: "watchList"
+  }, watchNodes);
 };
 
-var loadDomosFromServer = function loadDomosFromServer() {
-  //    const deleteButton = document.querySelector("#deleteButton");
-  //    
-  //    deleteButton.addEventListener("click", (e) => {
-  //        sendAjax('DELETE', '/deleteDomos', null, (data) => {
-  //            ReactDOM.render(
-  //                <DomoList domos={data.domos} />, document.querySelector("#domos")
-  //            );
-  //        });
-  //    });
-  sendAjax('GET', '/getDomos', null, function (data) {
-    ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-      domos: data.domos
-    }), document.querySelector("#domos"));
+var loadWatchlistFromServer = function loadWatchlistFromServer() {
+  sendAjax('GET', '/getWatchlist', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(WatchList, {
+      watchlist: data.watchlist
+    }), document.querySelector("#watchlist"));
   });
 };
 
 var setup = function setup(csrf) {
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoForm, {
+  ReactDOM.render( /*#__PURE__*/React.createElement(MakerForm, {
     csrf: csrf
-  }), document.querySelector("#makeDomo"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-    domos: []
-  }), document.querySelector("#domos"));
-  loadDomosFromServer();
+  }), document.querySelector("#makeWatch"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(WatchList, {
+    watchlist: []
+  }), document.querySelector("#watchlist"));
+  loadWatchlistFromServer();
 };
 
 var getToken = function getToken() {
