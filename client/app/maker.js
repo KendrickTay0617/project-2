@@ -15,36 +15,51 @@ const handleWatch = (e) => {
     return false;
 };
 
-//const MakerForm = (props) => {
-//    return (
-//        <form id="makerForm"
-//                onSubmit={handleDomo}
-//                name="makerForm"
-//                action="/maker"
-//                method="POST"
-//                className="makerForm"
-//        >
-//            <label htmlFor="type">Type: </label>
-//            <select name="type" id="type">
-//                <option value="movie">Movie</option>
-//                <option value="show">Show</option>
-//                <option value="other">(other)</option>
-//            </select>
-//                
-//            <label htmlFor="name">Name: </label>
-//            <input id="domoName" type="text" name="name" placeholder="Domo Name"/>
-//
-//            <label htmlFor="age">Age: </label>
-//            <input id="domoAge" type="text" name="age" placeholder="Domo Age"/>
-//
-//            <label htmlFor="level">Level: </label>
-//            <input id="domoLevel" type="text" name="level" placeholder="Domo Level"/>
-//
-//            <input type="hidden" name="_csrf" value={props.csrf} />
-//            <input className="makeDomoSubmit" type="submit" value="Make Domo" />
-//        </form>
-//    );
-//};
+const handleChange = (e) => {
+    e.preventDefault();
+    
+    $("#domoMessage").animate({width:'hide'},350);
+    
+    if($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
+        handleError("RAWR! All fields are required");
+        return false;
+    }
+    
+    if($("#pass").val() !== $("#pass2").val()) {
+        handleError("RAWR! Passwords do not match");
+        return false;
+    }
+    
+    sendAjax('POST', $("#settingsForm").attr("action"), $("#settingsForm").serialize(), redirect);
+    
+    return false;
+}
+
+const SettingsWindow = (props) => {
+    return (
+        <form id="settingsForm" name="settingsForm"
+            onSubmit={handleChange}
+            action="/updateAccount"
+            method="POST"
+            className="updateAccountForm"
+        >
+            <label htmlFor="username">Username: </label>
+            <input id="user" type="text" name="username" placeholder="username"/>
+            <label htmlFor="pass">Password: </label>
+            <input id="pass" type="password" name="pass" placeholder="password"/>
+            <label htmlFor="pass2">Re-type Password: </label>
+            <input id="pass2" type="password" name="pass2" placeholder="retype password"/>
+            <input type="hidden" name="_csrf" value={props.csrf} />
+            <input className="formSubmit" type="submit" value="Sign Up" />
+        </form>
+    );
+};
+
+const createSettingsWindow = (csrf) => {
+    ReactDOM.render(
+        <SettingsWindow csrf={csrf} />, document.querySelector("#watchlist")
+    );
+};
 
 const MakerForm = (props) => {
     return (
@@ -122,6 +137,46 @@ const WatchList = function(props) {
     );
 };
 
+const MovieList = (props) => {
+    if (props.watchlist.length === 0) {
+        return (
+            <div className="watchList">
+                <h3 className="emptyWatch">There is nothing here...</h3>
+            </div>
+        );
+    }
+    
+    const watchNodes = props.watchlist.map(function(watch) {
+        let movieIcon = "/assets/img/movie.png";
+        
+        if (watch.watchType === "movie") {
+            return (
+                <div key={watch._id} className="watch">
+                    <img src={movieIcon} alt="movie icon" className="icon" />
+                    <h3 className="watchTitle"> Title: {watch.title} </h3>
+                    <h3 className="watchLink"> Link: {watch.link} </h3>
+                </div>
+            );
+        }
+    });
+    
+    return (
+        <div className="watchList">
+            {watchNodes}
+        </div>
+    );
+};
+
+//const createMoviesWindow = (csrf) => {
+////    ReactDOM.render(
+////        <MoviesList csrf={csrf} />, document.querySelector("#watchlist")
+////    );
+//    
+//    ReactDOM.render(
+//        <MoviesList watchlist={[]} />, document.querySelector("#watchlist")
+//    );
+//};
+
 const loadWatchlistFromServer = () => {
     sendAjax('GET', '/getWatchlist', null, (data) => {
         ReactDOM.render(
@@ -130,7 +185,55 @@ const loadWatchlistFromServer = () => {
     });
 };
 
+const loadMovieListFromServer = () => {
+    sendAjax('GET', '/getWatchlist', null, (data) => {
+        ReactDOM.render(
+            <MovieList watchlist={data.watchlist} />, document.querySelector("#watchlist")
+        );
+    });
+};
+
 const setup = function(csrf) {
+    const settingsButton = document.querySelector("#settingsButton");
+    const moviesButton = document.querySelector("#moviesButton");
+    const allButton = document.querySelector("#allButton");
+    
+    //SETTINGS BUTTON
+    settingsButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        createSettingsWindow(csrf);
+        return false;
+        
+        loadWatchlistFromServer();
+    });
+    
+    //MOVIES BUTTON
+    moviesButton.addEventListener("click", (e) => {
+        ReactDOM.render(
+            <MakerForm csrf={csrf} />, document.querySelector("#makeWatch")
+        );
+    
+        ReactDOM.render(
+            <MovieList watchlist={[]} />, document.querySelector("#watchlist")
+        );
+    
+        loadMovieListFromServer();
+    });
+    
+    //ALL BUTTON
+    allButton.addEventListener("click", (e) => {
+        ReactDOM.render(
+            <MakerForm csrf={csrf} />, document.querySelector("#makeWatch")
+        );
+    
+        ReactDOM.render(
+            <WatchList watchlist={[]} />, document.querySelector("#watchlist")
+        );
+    
+        loadWatchlistFromServer();
+    });
+    
+    //DEFAULT
     ReactDOM.render(
         <MakerForm csrf={csrf} />, document.querySelector("#makeWatch")
     );
