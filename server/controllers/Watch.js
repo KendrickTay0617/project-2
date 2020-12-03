@@ -2,6 +2,7 @@ const models = require('../models');
 
 const { Watch } = models;
 
+//Display makerPage (app) depending on who is signed in
 const makerPage = (req, res) => {
   Watch.WatchModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
@@ -13,11 +14,13 @@ const makerPage = (req, res) => {
   });
 };
 
+//Create a watchlist object
 const makeWatch = (req, res) => {
   if (!req.body.title) {
     return res.status(400).json({ error: 'Title is required' });
   }
-
+    
+    //object data depending on user input
   const watchData = {
     title: req.body.title,
     watchType: req.body.watchType,
@@ -31,6 +34,7 @@ const makeWatch = (req, res) => {
 
   watchPromise.then(() => res.json({ redirect: '/maker' }));
 
+    //catch errors
   watchPromise.catch((err) => {
     console.log(err);
     if (err.code === 11000) {
@@ -43,6 +47,7 @@ const makeWatch = (req, res) => {
   return watchPromise;
 };
 
+//get all the watchlist objects data back to the user
 const getWatchlist = (request, response) => {
   const req = request;
   const res = response;

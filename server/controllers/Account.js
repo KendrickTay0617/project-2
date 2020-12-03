@@ -1,7 +1,7 @@
 const models = require('../models');
 
 const { Account } = models;
-
+//renders the login page
 const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
 };
@@ -10,11 +10,13 @@ const loginPage = (req, res) => {
 //  res.render('signup', { csrfToken: req.csrfToken() });
 // };
 
+// lets user sign out and go back to the default login page
 const logout = (req, res) => {
   req.session.destroy();
   res.redirect('/');
 };
 
+//authenticate user by asking for username and password before logging in
 const login = (request, response) => {
   const req = request;
   const res = response;
@@ -38,6 +40,7 @@ const login = (request, response) => {
   });
 };
 
+// lets user sign up by inputting a unique username and password as well as retyping the password in case of typo error
 const signup = (request, response) => {
   const req = request;
   const res = response;
@@ -71,6 +74,7 @@ const signup = (request, response) => {
       return res.json({ redirect: '/maker' });
     });
 
+      //catch errors
     savePromise.catch((err) => {
       console.log(err);
 
@@ -83,6 +87,7 @@ const signup = (request, response) => {
   });
 };
 
+//update user's account by changing usernames and passwords
 const updateAccount = (request, response) => {
     const req = request;
     const res = response;

@@ -1,13 +1,14 @@
 "use strict";
 
+//handleWatch sends a POST request that allows user to create a watchlist object
 var handleWatch = function handleWatch(e) {
   e.preventDefault();
-  $("#domoMessage").animate({
+  $("#errMessage").animate({
     width: 'hide'
   }, 350);
 
   if ($("#watchTitle").val() == '') {
-    handleError("Tite is required");
+    handleError("Title is required");
     return false;
   }
 
@@ -15,27 +16,29 @@ var handleWatch = function handleWatch(e) {
     loadWatchlistFromServer();
   });
   return false;
-};
+}; //handleChange sends a POST request that allows user to update their username and password information
+
 
 var handleChange = function handleChange(e) {
   e.preventDefault();
-  $("#domoMessage").animate({
+  $("#errMessage").animate({
     width: 'hide'
   }, 350);
 
   if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-    handleError("RAWR! All fields are required");
+    handleError("All fields are required");
     return false;
   }
 
   if ($("#pass").val() !== $("#pass2").val()) {
-    handleError("RAWR! Passwords do not match");
+    handleError("Passwords do not match");
     return false;
   }
 
   sendAjax('POST', $("#settingsForm").attr("action"), $("#settingsForm").serialize(), redirect);
   return false;
-};
+}; //html structure of settings window
+
 
 var SettingsWindow = function SettingsWindow(props) {
   return /*#__PURE__*/React.createElement("form", {
@@ -45,43 +48,54 @@ var SettingsWindow = function SettingsWindow(props) {
     action: "/updateAccount",
     method: "POST",
     className: "updateAccountForm"
+  }, /*#__PURE__*/React.createElement("div", {
+    id: "div1"
   }, /*#__PURE__*/React.createElement("label", {
-    htmlFor: "username"
+    id: "user1Label",
+    htmlFor: "username1"
   }, "Username: "), /*#__PURE__*/React.createElement("input", {
-    id: "user",
+    id: "user1",
     type: "text",
-    name: "username",
+    name: "username1",
     placeholder: "username"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "pass"
+  })), /*#__PURE__*/React.createElement("div", {
+    id: "div2"
+  }, /*#__PURE__*/React.createElement("label", {
+    id: "pass1Label",
+    htmlFor: "pass1"
   }, "Password: "), /*#__PURE__*/React.createElement("input", {
-    id: "pass",
+    id: "pass1",
     type: "password",
-    name: "pass",
+    name: "pass1",
     placeholder: "password"
-  }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "pass2"
-  }, "Re-type Password: "), /*#__PURE__*/React.createElement("input", {
-    id: "pass2",
+  })), /*#__PURE__*/React.createElement("div", {
+    id: "div3"
+  }, /*#__PURE__*/React.createElement("label", {
+    id: "pass12Label",
+    htmlFor: "pass12"
+  }, "Password: "), /*#__PURE__*/React.createElement("input", {
+    id: "pass12",
     type: "password",
-    name: "pass2",
-    placeholder: "retype password"
-  }), /*#__PURE__*/React.createElement("input", {
+    name: "pass12",
+    placeholder: "re-type password"
+  })), /*#__PURE__*/React.createElement("input", {
     type: "hidden",
     name: "_csrf",
     value: props.csrf
   }), /*#__PURE__*/React.createElement("input", {
     className: "formSubmit",
     type: "submit",
-    value: "Sign Up"
+    value: "Save"
   }));
-};
+}; //render the settings window
+
 
 var createSettingsWindow = function createSettingsWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(SettingsWindow, {
     csrf: csrf
   }), document.querySelector("#watchlist"));
-};
+}; //Form that lets user create watchlist object
+
 
 var MakerForm = function MakerForm(props) {
   return /*#__PURE__*/React.createElement("form", {
@@ -111,7 +125,7 @@ var MakerForm = function MakerForm(props) {
     placeholder: "Title"
   }), /*#__PURE__*/React.createElement("label", {
     htmlFor: "link"
-  }, "URL (Optional): "), /*#__PURE__*/React.createElement("input", {
+  }, "URL: "), /*#__PURE__*/React.createElement("input", {
     id: "watchLink",
     type: "text",
     name: "link",
@@ -125,7 +139,8 @@ var MakerForm = function MakerForm(props) {
     type: "submit",
     value: "Create"
   }));
-};
+}; //html skeleton of watchlist
+
 
 var WatchList = function WatchList(props) {
   if (props.watchlist.length === 0) {
@@ -151,9 +166,11 @@ var WatchList = function WatchList(props) {
         className: "icon"
       }), /*#__PURE__*/React.createElement("h3", {
         className: "watchTitle"
-      }, " Title: ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
+      }, " ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
         className: "watchLink"
-      }, " Link: ", watch.link, " "));
+      }, /*#__PURE__*/React.createElement("a", {
+        href: watch.link
+      }, "Link")));
     } else if (watch.watchType === "show") {
       return /*#__PURE__*/React.createElement("div", {
         key: watch._id,
@@ -164,9 +181,11 @@ var WatchList = function WatchList(props) {
         className: "icon"
       }), /*#__PURE__*/React.createElement("h3", {
         className: "watchTitle"
-      }, " Title: ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
+      }, " ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
         className: "watchLink"
-      }, " Link: ", watch.link, " "));
+      }, /*#__PURE__*/React.createElement("a", {
+        href: watch.link
+      }, "Link")));
     } else {
       return /*#__PURE__*/React.createElement("div", {
         key: watch._id,
@@ -177,15 +196,18 @@ var WatchList = function WatchList(props) {
         className: "icon"
       }), /*#__PURE__*/React.createElement("h3", {
         className: "watchTitle"
-      }, " Title: ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
+      }, " ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
         className: "watchLink"
-      }, " Link: ", watch.link, " "));
+      }, /*#__PURE__*/React.createElement("a", {
+        href: watch.link
+      }, "Link")));
     }
   });
   return /*#__PURE__*/React.createElement("div", {
     className: "watchList"
   }, watchNodes);
-};
+}; //html skeleton of movieList
+
 
 var MovieList = function MovieList(props) {
   if (props.watchlist.length === 0) {
@@ -209,23 +231,87 @@ var MovieList = function MovieList(props) {
         className: "icon"
       }), /*#__PURE__*/React.createElement("h3", {
         className: "watchTitle"
-      }, " Title: ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
+      }, " ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
         className: "watchLink"
-      }, " Link: ", watch.link, " "));
+      }, /*#__PURE__*/React.createElement("a", {
+        href: watch.link
+      }, "Link")));
     }
   });
   return /*#__PURE__*/React.createElement("div", {
     className: "watchList"
   }, watchNodes);
-}; //const createMoviesWindow = (csrf) => {
-////    ReactDOM.render(
-////        <MoviesList csrf={csrf} />, document.querySelector("#watchlist")
-////    );
-//    
-//    ReactDOM.render(
-//        <MoviesList watchlist={[]} />, document.querySelector("#watchlist")
-//    );
-//};
+}; //html skeleton of ShowList
+
+
+var ShowList = function ShowList(props) {
+  if (props.watchlist.length === 0) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "watchList"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "emptyWatch"
+    }, "There is nothing here..."));
+  }
+
+  var watchNodes = props.watchlist.map(function (watch) {
+    var showIcon = "/assets/img/show.png";
+
+    if (watch.watchType === "show") {
+      return /*#__PURE__*/React.createElement("div", {
+        key: watch._id,
+        className: "watch"
+      }, /*#__PURE__*/React.createElement("img", {
+        src: showIcon,
+        alt: "show icon",
+        className: "icon"
+      }), /*#__PURE__*/React.createElement("h3", {
+        className: "watchTitle"
+      }, " ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "watchLink"
+      }, /*#__PURE__*/React.createElement("a", {
+        href: watch.link
+      }, "Link")));
+    }
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "watchList"
+  }, watchNodes);
+}; //html skeleton of VideosList
+
+
+var VideosList = function VideosList(props) {
+  if (props.watchlist.length === 0) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "watchList"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "emptyWatch"
+    }, "There is nothing here..."));
+  }
+
+  var watchNodes = props.watchlist.map(function (watch) {
+    var videoIcon = "/assets/img/video.png";
+
+    if (watch.watchType === "other") {
+      return /*#__PURE__*/React.createElement("div", {
+        key: watch._id,
+        className: "watch"
+      }, /*#__PURE__*/React.createElement("img", {
+        src: videoIcon,
+        alt: "video icon",
+        className: "icon"
+      }), /*#__PURE__*/React.createElement("h3", {
+        className: "watchTitle"
+      }, " ", watch.title, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "watchLink"
+      }, /*#__PURE__*/React.createElement("a", {
+        href: watch.link
+      }, "Link")));
+    }
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "watchList"
+  }, watchNodes);
+}; //GET request to get watchlist data
 
 
 var loadWatchlistFromServer = function loadWatchlistFromServer() {
@@ -234,7 +320,8 @@ var loadWatchlistFromServer = function loadWatchlistFromServer() {
       watchlist: data.watchlist
     }), document.querySelector("#watchlist"));
   });
-};
+}; //GET request to get movie list data
+
 
 var loadMovieListFromServer = function loadMovieListFromServer() {
   sendAjax('GET', '/getWatchlist', null, function (data) {
@@ -242,12 +329,46 @@ var loadMovieListFromServer = function loadMovieListFromServer() {
       watchlist: data.watchlist
     }), document.querySelector("#watchlist"));
   });
-};
+}; //GET request to get show list data
+
+
+var loadShowListFromServer = function loadShowListFromServer() {
+  sendAjax('GET', '/getWatchlist', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(ShowList, {
+      watchlist: data.watchlist
+    }), document.querySelector("#watchlist"));
+  });
+}; //GET request to get video list data
+
+
+var loadVideoListFromServer = function loadVideoListFromServer() {
+  sendAjax('GET', '/getWatchlist', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(VideosList, {
+      watchlist: data.watchlist
+    }), document.querySelector("#watchlist"));
+  });
+}; //setup calls previous functions based on what tab the user clicks on
+
 
 var setup = function setup(csrf) {
   var settingsButton = document.querySelector("#settingsButton");
   var moviesButton = document.querySelector("#moviesButton");
-  var allButton = document.querySelector("#allButton"); //SETTINGS BUTTON
+  var showsButton = document.querySelector("#showsButton");
+  var videosButton = document.querySelector("#videosButton");
+  var allButton = document.querySelector("#allButton");
+  var subscribeButton = document.querySelector("#subscribeButton");
+  var moviesSpan = document.querySelector("#moviesSpan");
+  var showsSpan = document.querySelector("#showsSpan");
+  var videosSpan = document.querySelector("#videosSpan");
+  moviesSpan.style.display = "none";
+  showsSpan.style.display = "none";
+  videosSpan.style.display = "none";
+  subscribeButton.addEventListener("click", function (e) {
+    moviesSpan.style.display = "block";
+    showsSpan.style.display = "block";
+    videosSpan.style.display = "block";
+    subscribeButton.disabled = true;
+  }); //SETTINGS BUTTON
 
   settingsButton.addEventListener("click", function (e) {
     e.preventDefault();
@@ -257,6 +378,7 @@ var setup = function setup(csrf) {
   }); //MOVIES BUTTON
 
   moviesButton.addEventListener("click", function (e) {
+    e.preventDefault();
     ReactDOM.render( /*#__PURE__*/React.createElement(MakerForm, {
       csrf: csrf
     }), document.querySelector("#makeWatch"));
@@ -264,9 +386,35 @@ var setup = function setup(csrf) {
       watchlist: []
     }), document.querySelector("#watchlist"));
     loadMovieListFromServer();
+    return false;
+  }); //SHOW BUTTON
+
+  showsButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    ReactDOM.render( /*#__PURE__*/React.createElement(MakerForm, {
+      csrf: csrf
+    }), document.querySelector("#makeWatch"));
+    ReactDOM.render( /*#__PURE__*/React.createElement(ShowList, {
+      watchlist: []
+    }), document.querySelector("#watchlist"));
+    loadShowListFromServer();
+    return false;
+  }); //VIDEOS BUTTON
+
+  videosButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    ReactDOM.render( /*#__PURE__*/React.createElement(MakerForm, {
+      csrf: csrf
+    }), document.querySelector("#makeWatch"));
+    ReactDOM.render( /*#__PURE__*/React.createElement(VideosList, {
+      watchlist: []
+    }), document.querySelector("#watchlist"));
+    loadVideoListFromServer();
+    return false;
   }); //ALL BUTTON
 
   allButton.addEventListener("click", function (e) {
+    e.preventDefault();
     ReactDOM.render( /*#__PURE__*/React.createElement(MakerForm, {
       csrf: csrf
     }), document.querySelector("#makeWatch"));
@@ -274,6 +422,7 @@ var setup = function setup(csrf) {
       watchlist: []
     }), document.querySelector("#watchlist"));
     loadWatchlistFromServer();
+    return false;
   }); //DEFAULT
 
   ReactDOM.render( /*#__PURE__*/React.createElement(MakerForm, {
@@ -283,7 +432,8 @@ var setup = function setup(csrf) {
     watchlist: []
   }), document.querySelector("#watchlist"));
   loadWatchlistFromServer();
-};
+}; //get csrf token
+
 
 var getToken = function getToken() {
   sendAjax('GET', '/getToken', null, function (result) {
@@ -298,13 +448,13 @@ $(document).ready(function () {
 
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
-  $("#domoMessage").animate({
+  $("#errMessage").animate({
     width: 'toggle'
   }, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({
+  $("#errMessage").animate({
     width: 'hide'
   }, 350);
   window.location = response.redirect;

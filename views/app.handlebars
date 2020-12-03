@@ -13,19 +13,22 @@
 <body>
   <nav><a href="/login"><img id="logo" src="/assets/img/face.png" alt="face logo"/></a>
       <div class="navlink"><a id="allButton" href="/maker">All</a></div>
-      <div class="navlink"><a id="moviesButton" href="/maker">Movies</a></div>
-      <div class="navlink"><a id="showsButton" href="/maker">Shows</a></div>
-      <div class="navlink"><a id="videosButton" href="/maker">Videos</a></div>
+      <span id="moviesSpan"><div class="navlink"><a id="moviesButton" href="/maker">Movies</a></div></span>
+      <span id="showsSpan"><div class="navlink"><a id="showsButton" href="/maker">Shows</a></div></span>
+      <span id="videosSpan"><div class="navlink"><a id="videosButton" href="/maker">Videos</a></div></span>
       <div class="navlink"><a id="settingsButton" href="/maker">Settings</a></div>
     <div class="navlink"><a href="/logout">Log out</a></div>
   </nav>
   <section id="makeWatch">
   </section>
+    <section id="subscription">
+        <button id="subscribeButton">Subscribe $0.99</button>
+    </section>
   <section id="watchlist">
   </section>
 
-  <div id="domoMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box"/>
-    <h3><span id="errorMessage"></span></h3><img id="domo" src="assets/img/domo.png" alt="domo"/>
+  <div id="errMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box"/>
+    <h3><span id="errorMessage"></span></h3><img id="err" src="assets/img/error.png" alt="error"/>
   </div>
   <script src="/assets/bundle.js"></script>
 </body>

@@ -1,10 +1,11 @@
+//handleLogin sends a POST request that allows a user to log in and arrive at their designated app page
 const handleLogin = (e) => {
     e.preventDefault();
     
-    $("#domoMessage").animate({width:'hide'},350);
+    $("#errMessage").animate({width:'hide'},350);
     
     if($("#user").val() == '' || $("#pass").val() == '') {
-        handleError("RAWR! Username or password is empty");
+        handleError("Username or password is empty");
         return false;
     }
     
@@ -15,18 +16,19 @@ const handleLogin = (e) => {
     return false;
 }
 
+//handleSignup sends a POST request that lets a user create an account by inputting a unique username and password
 const handleSignup = (e) => {
     e.preventDefault();
     
-    $("#domoMessage").animate({width:'hide'},350);
+    $("#errMessage").animate({width:'hide'},350);
     
     if($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-        handleError("RAWR! All fields are required");
+        handleError("All fields are required");
         return false;
     }
     
     if($("#pass").val() !== $("#pass2").val()) {
-        handleError("RAWR! Passwords do not match");
+        handleError("Passwords do not match");
         return false;
     }
     
@@ -35,6 +37,7 @@ const handleSignup = (e) => {
     return false;
 };
 
+//LoginWindow is the html structure of the login page
 const LoginWindow = (props) => {
     return (
         <form id="loginForm" name="loginForm"
@@ -54,6 +57,7 @@ const LoginWindow = (props) => {
     );
 };
 
+//SignupWindow is the html structure of the signup page
 const SignupWindow = (props) => {
     return (
         <form id="signupForm"
@@ -75,6 +79,7 @@ const SignupWindow = (props) => {
     );
 };
 
+//render the login window
 const createLoginWindow = (csrf) => {
     ReactDOM.render(
         <LoginWindow csrf={csrf} />,
@@ -82,6 +87,7 @@ const createLoginWindow = (csrf) => {
     );
 };
 
+//render the signup window
 const createSignupWindow = (csrf) => {
     ReactDOM.render(
         <SignupWindow csrf={csrf} />,
@@ -89,6 +95,7 @@ const createSignupWindow = (csrf) => {
     );
 };
 
+//setup calls the previous functions and creates either the login window or signup window depending on which tab the user clicks
 const setup = (csrf) => {
     const loginButton = document.querySelector("#loginButton");
     const signupButton = document.querySelector("#signupButton");
@@ -108,6 +115,7 @@ const setup = (csrf) => {
     createLoginWindow(csrf); //default view
 };
 
+//get csrf token
 const getToken = () => {
     sendAjax('GET', '/getToken', null, (result) => {
         setup(result.csrfToken);
