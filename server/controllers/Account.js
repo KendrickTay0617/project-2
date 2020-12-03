@@ -1,7 +1,7 @@
 const models = require('../models');
 
 const { Account } = models;
-//renders the login page
+// renders the login page
 const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
 };
@@ -16,7 +16,7 @@ const logout = (req, res) => {
   res.redirect('/');
 };
 
-//authenticate user by asking for username and password before logging in
+// authenticate user by asking for username and password before logging in
 const login = (request, response) => {
   const req = request;
   const res = response;
@@ -40,7 +40,7 @@ const login = (request, response) => {
   });
 };
 
-// lets user sign up by inputting a unique username and password as well as retyping the password in case of typo error
+// lets user sign up by inputting a unique username and password
 const signup = (request, response) => {
   const req = request;
   const res = response;
@@ -74,7 +74,7 @@ const signup = (request, response) => {
       return res.json({ redirect: '/maker' });
     });
 
-      //catch errors
+    // catch errors
     savePromise.catch((err) => {
       console.log(err);
 
@@ -87,42 +87,42 @@ const signup = (request, response) => {
   });
 };
 
-//update user's account by changing usernames and passwords
+// update user's account by changing usernames and passwords
 const updateAccount = (request, response) => {
-    const req = request;
-    const res = response;
-    
-    // cast to strings to cover up some security flaws
-    req.body.username = `${req.body.username}`;
-    req.body.pass = `${req.body.pass}`;
-    req.body.pass2 = `${req.body.pass2}`;
-    
-    if (!req.body.username || !req.body.pass || !req.body.pass2) {
-        return res.status(400).json({ error: 'RAWR! All fields are required' });
-    }
+  const req = request;
+  const res = response;
 
-    if (req.body.pass !== req.body.pass2) {
-        return res.status(400).json({ error: 'RAWR! Passwords do not match' });
-    }
-    
-    return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
-        const accountData = {
-            username: req.body.username,
-            salt,
-            password: hash,
-        };
+  // cast to strings to cover up some security flaws
+  req.body.username = `${req.body.username}`;
+  req.body.pass = `${req.body.pass}`;
+  req.body.pass2 = `${req.body.pass2}`;
 
-        Account.AccountModel.updateOne({_id: req.session.account._id}, accountData, function(err) {
-            if (err) {
-                return res.status(400).json({ error: 'All fields are required' });
-            }
-            
-            return res.status(200);
-        });
-        
-        res.json({ redirect: '/maker' });
+  if (!req.body.username || !req.body.pass || !req.body.pass2) {
+    return res.status(400).json({ error: 'RAWR! All fields are required' });
+  }
+
+  if (req.body.pass !== req.body.pass2) {
+    return res.status(400).json({ error: 'RAWR! Passwords do not match' });
+  }
+
+  return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
+    const accountData = {
+      username: req.body.username,
+      salt,
+      password: hash,
+    };
+
+    Account.AccountModel.updateOne({ _id: req.session.account._id }, accountData, (err) => {
+      if (err) {
+        return res.status(400).json({ error: 'All fields are required' });
+      }
+
+      return res.status(200);
     });
-}
+
+    res.json({ redirect: '/maker' });
+  });
+};
 
 const getToken = (request, response) => {
   const req = request;

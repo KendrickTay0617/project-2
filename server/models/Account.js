@@ -8,9 +8,9 @@ const iterations = 10000;
 const saltLength = 64;
 const keyLength = 64;
 
-//Schema for account objects
+// Schema for account objects
 const AccountSchema = new mongoose.Schema({
-    //username of user/account
+  // username of user/account
   username: {
     type: String,
     required: true,
@@ -22,7 +22,7 @@ const AccountSchema = new mongoose.Schema({
     type: Buffer,
     required: true,
   },
-    //password of user/account
+  // password of user/account
   password: {
     type: String,
     required: true,

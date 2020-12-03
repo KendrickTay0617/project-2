@@ -17,7 +17,7 @@ const WatchSchema = new mongoose.Schema({
     trim: true,
     set: setName,
   },
-    
+
   watchType: {
     type: String,
     required: true,
@@ -55,7 +55,6 @@ WatchSchema.statics.findByOwner = (ownerId, callback) => {
 
   return WatchModel.find(search).select('title watchType link').lean().exec(callback);
 };
-
 
 WatchModel = mongoose.model('Watch', WatchSchema);
 
